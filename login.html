@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>تسجيل الدخول - Meeting App</title>
+  <style>
+    :root {
+      --primary: #0097b2;
+      --primary-hover: #007a91;
+      --primary-light: rgba(0, 151, 178, 0.2);
+      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f2b38 100%);
+      --glass-bg: rgba(255, 255, 255, 0.06);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --glass-card: rgba(30, 41, 59, 0.75);
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+      --danger: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      user-select: none;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      background-size: 200% 200%;
+      animation: gradientBG 15s ease infinite;
+      color: var(--text-main);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* بطاقة الدخول بأسلوب macOS Frosted Glass */
+    .login-card {
+      width: 400px;
+      padding: 40px;
+      background: var(--glass-card);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 28px;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      animation: popup 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes popup {
+      from { opacity: 0; transform: scale(0.92) translateY(20px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .brand-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 22px;
+      background: rgba(0, 151, 178, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 25px rgba(0, 151, 178, 0.25);
+      border: 1px solid rgba(0, 151, 178, 0.3);
+    }
+
+    .brand-icon img {
+      width: 54px;
+      height: 54px;
+    }
+
+    .title-group {
+      text-align: center;
+    }
+
+    .title-group h2 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .title-group p {
+      font-size: 14px;
+      color: var(--text-sub);
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+
+    .form-group {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .input-box {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 16px;
+      border: 1px solid var(--glass-border);
+      background: rgba(0, 0, 0, 0.25);
+      color: white;
+      font-size: 15px;
+      outline: none;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .input-box:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px var(--primary-light);
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 14px;
+      border-radius: 16px;
+      border: none;
+      background: var(--primary);
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0, 151, 178, 0.35);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-login:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 25px rgba(0, 151, 178, 0.45);
+    }
+
+    .btn-login:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-link {
+      background: none;
+      border: none;
+      color: var(--text-sub);
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: underline;
+      align-self: center;
+      margin-top: -4px;
+      transition: color 0.2s;
+    }
+
+    .btn-link:hover {
+      color: var(--text-main);
+    }
+
+    /* اهتزاز الحقل عند الخطأ (macOS Shake) */
+    .shake {
+      animation: shake 0.4s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-card" id="card">
+    <div class="brand-icon">
+      <img src="./MEETING-APP.ico" alt="Meeting App">
+    </div>
+
+    <div class="title-group">
+      <h2>مرحباً بك مجدداً</h2>
+      <p id="subTitle">أدخل بياناتك للبدء واستخدام الاجتماعات</p>
+    </div>
+
+    <!-- الخطوة الأولى: الاسم والبريد الإلكتروني -->
+    <div class="form-group" id="step1">
+      <input type="text" id="username" class="input-box" placeholder="اسمك الكامل" autofocus onkeydown="if(event.key==='Enter') requestVerification()">
+      <input type="email" id="email" class="input-box" placeholder="البريد الإلكتروني" onkeydown="if(event.key==='Enter') requestVerification()">
+      <button class="btn-login" id="sendBtn" onclick="requestVerification()">إرسال كود التفعيل</button>
+    </div>
+
+    <!-- الخطوة الثانية: كود التفعيل -->
+    <div class="form-group" id="step2" style="display: none;">
+      <input type="text" id="verifyCode" class="input-box" placeholder="أدخل الكود (6 أرقام)" maxlength="6" style="text-align: center; letter-spacing: 4px; font-size: 18px;" onkeydown="if(event.key==='Enter') verifyAndLogin()">
+      <button class="btn-login" id="verifyBtn" onclick="verifyAndLogin()">تأكيد ودخول</button>
+      <button class="btn-link" onclick="resetToStep1()">تغيير البريد الإلكتروني</button>
+    </div>
+  </div>
+
+  <script>
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    let tempUserData = {};
+
+    // التحقق التلقائي إذا كان المسجل داخلاً مسبقاً
+    if (localStorage.getItem('currentUser')) {
+      window.location.href = 'index.html';
+    }
+
+    function triggerError(cardId) {
+      const card = document.getElementById(cardId);
+      card.classList.add('shake');
+      setTimeout(() => card.classList.remove('shake'), 400);
+    }
+
+    async function requestVerification() {
+      const nameInput = document.getElementById('username');
+      const emailInput = document.getElementById('email');
+      const name = nameInput.value.trim();
+      const email = emailInput.value.trim();
+
+      if (!name || !emailRegex.test(email)) {
+        triggerError('card');
+        return;
+      }
+
+      tempUserData = { name, email };
+      const btn = document.getElementById('sendBtn');
+      btn.innerText = 'جاري الإرسال...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('http://localhost:3000/api/send-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(tempUserData)
+        });
+
+        if (res.ok) {
+          document.getElementById('step1').style.display = 'none';
+          document.getElementById('step2').style.display = 'flex';
+          document.getElementById('subTitle').innerText = 'تم إرسال كود التفعيل إلى بريدك الإلكتروني';
+          document.getElementById('verifyCode').focus();
+        } else {
+          triggerError('card');
+          alert('تعذر إرسال الكود، يرجى التأكد من البريد الإلكتروني والمحاولة لاحقاً.');
+        }
+      } catch (e) {
+        triggerError('card');
+        alert('فشل الاتصال بالخادم. تأكد من تشغيل server.js');
+      } finally {
+        btn.innerText = 'إرسال كود التفعيل';
+        btn.disabled = false;
+      }
+    }
+
+    async function verifyAndLogin() {
+      const codeInput = document.getElementById('verifyCode');
+      const code = codeInput.value.trim();
+
+      if (code.length !== 6) {
+        triggerError('card');
+        return;
+      }
+
+      const btn = document.getElementById('verifyBtn');
+      btn.innerText = 'جاري التحقق...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch('http://localhost:3000/api/verify-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: tempUserData.email, code })
+        });
+
+        if (res.ok) {
+          localStorage.setItem('currentUser', JSON.stringify(tempUserData));
+          window.location.href = 'index.html';
+        } else {
+          triggerError('card');
+          codeInput.value = '';
+          alert('الكود غير صحيح، يرجى المحاولة مرة أخرى.');
+        }
+      } catch (e) {
+        triggerError('card');
+        alert('حدث خطأ أثناء الاتصال بالخادم.');
+      } finally {
+        btn.innerText = 'تأكيد ودخول';
+        btn.disabled = false;
+      }
+    }
+
+    function resetToStep1() {
+      document.getElementById('step2').style.display = 'none';
+      document.getElementById('step1').style.display = 'flex';
+      document.getElementById('subTitle').innerText = 'أدخل بياناتك للبدء واستخدام الاجتماعات';
+      document.getElementById('email').focus();
+    }
+  </script>
+</body>
+</html>
